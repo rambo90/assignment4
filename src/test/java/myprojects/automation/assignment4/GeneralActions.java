@@ -1,6 +1,5 @@
 package myprojects.automation.assignment4;
 
-
 import myprojects.automation.assignment4.model.ProductData;
 import myprojects.automation.assignment4.utils.Properties;
 import org.openqa.selenium.By;
@@ -9,14 +8,9 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
 import java.util.List;
 
-
-/**
- * Contains main script actions that may be used in scripts.
- */
 public class GeneralActions {
     private WebDriver driver;
     private WebDriverWait wait;
@@ -25,18 +19,11 @@ public class GeneralActions {
     private By add = By.cssSelector("#page-header-desc-configuration-add");
     private By mainDiv = By.cssSelector("#main-div");
 
-
     public GeneralActions(WebDriver driver) {
         this.driver = driver;
         wait = new WebDriverWait(driver, 30);
     }
 
-    /**
-     * Logs in to Admin Panel.
-     *
-     * @param login
-     * @param password
-     */
     public void login(String login, String password) {
         driver.navigate().to(Properties.getBaseAdminUrl());
         driver.findElement(By.cssSelector("#email")).sendKeys(login);
@@ -77,17 +64,38 @@ public class GeneralActions {
         driver.navigate().to(Properties.getBaseUrl());
         waitForContentLoad(By.cssSelector("#wrapper"));
         driver.findElement(By.cssSelector("#content > section > a")).click();
-        List<WebElement> elements = driver.findElements(By.cssSelector(".h3.product-title"));
-        for (WebElement c : elements) {
-            if (c.getText().equals(newProduct.getName())) {
-                Assert.assertEquals(c.getText(), newProduct.getName());
-                c.click();
+        List<WebElement> listPages = driver.findElement(By.cssSelector(".page-list.clearfix.text-xs-center"))
+                .findElements(By.cssSelector("a.js-search-link"));
+
+        WebElement checkProduct = null;
+
+        for (int i = 1; i < listPages.size() - 1; i++) {
+            listPages = driver.findElement(By.cssSelector(".page-list.clearfix.text-xs-center"))
+                    .findElements(By.cssSelector("a.js-search-link"));
+            List<WebElement> elements = driver.findElements(By.cssSelector(".h3.product-title"));
+
+            for (WebElement c : elements) {
+                if (c.getText().equals(newProduct.getName())) {
+                    checkProduct = c;
+                    break;
+                }
+            }
+
+            if (checkProduct == null) {
+                listPages.get(i + 1).click();
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
+
+        checkProduct.click();
+        waitForContentLoad(By.cssSelector(".container"));
     }
-        /**
-         * Waits until page loader disappears from the page
-         */
+
     private void waitForContentLoad(By by) {
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
     }

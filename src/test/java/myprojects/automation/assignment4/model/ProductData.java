@@ -4,9 +4,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Random;
 
-/**
- * Hold Product information that is used among tests.
- */
 public class ProductData {
     private String name;
     private int qty;
@@ -32,9 +29,6 @@ public class ProductData {
         return new DecimalFormat("#0.00", separators).format(price);
     }
 
-    /**
-     * @return New Product object with random name, quantity and price values.
-     */
     public static ProductData generate() {
         Random random = new Random();
         return new ProductData(

@@ -20,18 +20,15 @@ public class CreateProductTest extends BaseTest {
 
     @Test(dataProvider = "login")
     public void createNewProduct(String login, String password) {
-
         actions.login(login, password);
         Assert.assertTrue(driver.findElement(By.className("page-title")).getText().contains("Пульт"));
         productData = ProductData.generate();
         actions.createProduct(productData);
     }
 
-    // TODO implement logic to check product visibility on website
     @Test(dependsOnMethods = "createNewProduct")
     public void checkNewProduct(){
         actions.checkProduct(productData);
-
         Assert.assertTrue(driver.findElement(By.cssSelector(".h1")).getText().contains(productData.getName().toUpperCase()));
         Assert.assertTrue(driver.findElement(By.cssSelector(".current-price")).getText().contains(productData.getPrice()));
         Assert.assertTrue(driver.findElement(By.cssSelector(".product-quantities")).getText().contains(productData.getQty().toString()));
